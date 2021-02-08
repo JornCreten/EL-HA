@@ -1,0 +1,18 @@
+# host_vars/lampstack.yml
+---
+
+rhbase_repositories:
+  - epel-release
+
+rhbase_install_packages:
+  - bash-completion
+  - policycoreutils
+  - setroubleshoot-server
+  - tree
+  - vim-enhanced
+  - tcpdump
+
+rhbase_firewall_allow_services:
+  - http
+  - https
+

@@ -1,0 +1,36 @@
+---
+- name: start firewalld
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- firewalld:
+    port: 80/tcp
+    permanent: true
+    state: enabled
+
+- name: reload service firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+
+# - name: Add lines to Config files for webpage caching
+#   blockinfile:
+#     path: /etc/httpd/conf/httpd.conf
+#     block: |
+#       LoadModule cache_module modules/mod_cache.so
+#       <IfModule mod_cache.c>
+#           LoadModule cache_disk_module modules/mod_cache_disk.so
+#           <IfModule mod_cache_disk.c>
+#               CacheRoot "var/cache/httpd/proxy"
+#               CacheEnable disk  "/"
+#               CacheDirLevels 5
+#               CacheDirLength 3
+#           </IfModule>
+
+#           # When acting as a proxy, don't cache the list of security updates
+#           CacheDisable "http://security.update.server/update-list/"
+#       </IfModule>
+
+      

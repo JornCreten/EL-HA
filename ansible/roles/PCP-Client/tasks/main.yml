@@ -1,0 +1,33 @@
+- name: Install pcp & addons
+  package:
+    name: 
+      - pcp
+      - pcp-webapi
+      - pcp-webjs
+      - pcp-webapp-vector
+      - pcp-webapp-grafana
+      - pcp-webapp-graphite
+
+- name: ensure services are started and enabled
+  service:
+    name: pmcd
+    state: started
+    enabled: true
+
+- name: ensure services are started and enabled
+  service:
+    name: pmwebd
+    state: started
+    enabled: true
+
+- name: ensure services are started and enabled
+  service:
+    name: pmlogger
+    state: started
+    enabled: true
+
+- name: Ensure the webapp can be reached remotely
+  firewalld:
+    port: 44323/tcp
+    state: enabled
+    permanent: true

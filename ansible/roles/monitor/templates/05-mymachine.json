@@ -1,0 +1,14 @@
+{
+  "srv001" : {
+    "visible" : true,
+    "color" : "rgb(103, 211, 0)",
+    "user" : "vagrant",
+    "address" : "192.168.56.11"
+  },
+  "srv002" : {
+    "visible" : true,
+    "color" : "rgb(103, 11, 77)",
+    "user" : "vagrant",
+    "address" : "192.168.56.12"
+  }
+}

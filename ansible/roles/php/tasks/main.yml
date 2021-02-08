@@ -1,0 +1,27 @@
+# roles/phpmyadmin/tasks/main.yml
+---
+
+- name: Install PHPMyAdmin
+  yum:
+    pkg: phpMyAdmin
+    state: installed
+  tags: phpmyadmin
+
+- name: Install config file
+  copy:
+    src: etc_httpd_conf.d_phpMyAdmin.conf
+    dest: /etc/httpd/conf.d/phpMyAdmin.conf
+  notify: restart httpd
+  tags: phpmyadmin
+
+
+- name: install the remi repository
+  yum:
+    name: http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+    state: present
+- name: install yum utils for configmgmr
+  yum: 
+    pkg: yum-utils
+
+- name: enable remi php 56
+  shell: yum-config-manager --enable remi-php56

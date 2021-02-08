@@ -1,0 +1,62 @@
+# site.yml
+---
+- hosts: srv001
+  become: true
+  roles:
+    - bertvv.rh-base
+    - sepolicy
+    - php
+    - bertvv.httpd
+    - bertvv.wordpress
+    - monitor
+    - PCP-Client
+    - webserver
+    - ansible-role-varnish-master
+
+
+- hosts: srv002
+  become: true
+  roles:
+    - bertvv.rh-base
+    - sepolicy
+    - php
+    - bertvv.httpd
+    - bertvv.wordpress
+    - monitor
+    - webserver
+    - ansible-role-varnish-master
+
+- hosts: srv003
+  become: true
+  roles:
+    - bertvv.rh-base
+    - sepolicy
+    - php
+    - bertvv.httpd
+    - bertvv.wordpress
+    - monitor
+    - PCP-Client
+    - webserver
+    - ansible-role-varnish-master
+    
+
+- hosts: loadbalancer
+  become: true
+  roles: 
+    - load
+    - monitor
+
+- hosts: db001
+  roles: 
+    - bertvv.mariadb
+    - monitor
+  tasks:
+    - name: set firewall for mariadb remote access
+      firewalld:
+        port: 3306/tcp
+        permanent: true
+        state: enabled
+
+- hosts: monitor
+  roles: 
+    - PCP-Client

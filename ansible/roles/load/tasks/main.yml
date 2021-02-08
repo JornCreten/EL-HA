@@ -1,0 +1,90 @@
+---
+- name: Install requisites for haproxy
+  yum:
+    name:
+      - gcc
+      - pcre-devel
+      - tar
+      - make
+
+- name: Download haproxy
+  get_url:
+    url: http://www.haproxy.org/download/2.0/src/haproxy-2.0.7.tar.gz
+    dest: /home/vagrant/haproxy.tar.gz
+
+- name: extract package
+  unarchive:
+    src: /home/vagrant/haproxy.tar.gz
+    dest: /home/vagrant/
+
+- name: compile the program
+  command: make --directory=/home/vagrant/haproxy-2.0.7 TARGET=/home/vagrant/linux-glibc
+
+#- name: Run haproxy install
+#  make:
+#    chdir: /home/vagrant/haproxy-2.0.7
+#    target: all
+
+- name: Run haproxy install
+  make:
+    chdir: /home/vagrant/haproxy-2.0.7
+    target: install
+  become: yes
+
+- name: Create a haproxy /etc directory if it does not exist
+  file:
+    path: /etc/haproxy
+    state: directory
+
+- name: Create a haproxy /etc directory if it does not exist
+  file:
+    path: /var/lib/haproxy 
+    state: directory
+
+- name: Make stats file for haproxy
+  file:
+    path: /var/lib/haproxy/stats
+    state: touch
+
+- name: Create a symbolic link
+  file:
+    src: /usr/local/sbin/haproxy
+    dest: /usr/sbin/haproxy
+    state: link
+    remote_src: true
+  
+- name: Insert haproxy systemd file
+  template: 
+    dest: /usr/lib/systemd/system
+    src: haproxy.service
+
+- name: Make a haproxy user for safety reasons
+  user:
+    name: haproxy
+    expires: -1
+
+- name: start firewalld
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- firewalld:
+    port: 80/tcp
+    permanent: true
+    state: enabled
+
+- firewalld:
+    port: 8181/tcp
+    permanent: true
+    state: enabled
+  notify: restart firewalld
+
+- name: Insert configuration file for haproxy
+  template: 
+    dest: /etc/haproxy
+    src: haproxy.cfg
+  notify: restart haproxy
+
+- name: Flush any remaining handlers
+  meta: flush_handlers
